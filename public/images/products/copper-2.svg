@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <!-- Copper Polish 500ml Bottle Variant -->
+  <defs>
+    <linearGradient id="copperBg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF5EE"/>
+      <stop offset="100%" stop-color="#EEDAC5"/>
+    </linearGradient>
+    <linearGradient id="metallicBottle2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#DE935F"/>
+      <stop offset="30%" stop-color="#F5CEAB"/>
+      <stop offset="70%" stop-color="#C87A48"/>
+      <stop offset="100%" stop-color="#8C441E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="500" rx="24" fill="url(#copperBg2)"/>
+
+  <g transform="translate(110, 60)">
+    <!-- Cap -->
+    <rect x="68" y="20" width="44" height="28" rx="4" fill="#2D2018"/>
+    <rect x="74" y="6" width="32" height="16" rx="2" fill="#1D1D1F"/>
+
+    <!-- Large Bottle Body 500ml -->
+    <path d="M68,54 C48,70 38,94 38,135 L38,335 C38,352 50,364 70,364 L110,364 C130,364 142,352 142,335 L142,135 C142,94 132,70 112,54 Z" fill="url(#metallicBottle2)"/>
+
+    <!-- Specular Strip -->
+    <path d="M52,135 C52,105 60,82 72,66 L78,72 C68,88 62,110 62,135 L62,330 C62,340 56,344 52,344 Z" fill="#FFFFFF" opacity="0.4"/>
+
+    <!-- Label -->
+    <rect x="48" y="130" width="84" height="160" rx="6" fill="#FFFFFF" stroke="#E5D6C5" stroke-width="0.75"/>
+    <text x="90" y="156" font-family="-apple-system, sans-serif" font-size="11" font-weight="800" fill="#1D1D1F" text-anchor="middle" letter-spacing="1.5">CITRAFOAM</text>
+    <line x1="65" y1="164" x2="115" y2="164" stroke="#C88A58" stroke-width="1.5"/>
+
+    <text x="90" y="184" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" fill="#C87A48" text-anchor="middle">COPPER &amp; BRASS</text>
+    <text x="90" y="196" font-family="-apple-system, sans-serif" font-size="8.5" font-weight="600" fill="#1D1D1F" text-anchor="middle">BRILLIANT POLISH</text>
+
+    <text x="90" y="226" font-family="-apple-system, sans-serif" font-size="6" font-weight="600" fill="#8C6E5A" text-anchor="middle">PRO STUDIO SIZE</text>
+    <text x="90" y="238" font-family="-apple-system, sans-serif" font-size="5.5" fill="#A89484" text-anchor="middle">RESTORES ANTIQUE METALS</text>
+
+    <rect x="74" y="254" width="32" height="12" rx="3" fill="#FBF6F1"/>
+    <text x="90" y="263" font-family="-apple-system, sans-serif" font-size="6.5" font-weight="700" fill="#4B382A" text-anchor="middle">500 ML</text>
+  </g>
+</svg>

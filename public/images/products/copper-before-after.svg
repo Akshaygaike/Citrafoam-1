@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tarnishGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A4A40"/>
+      <stop offset="40%" stop-color="#2D5A43"/>
+      <stop offset="70%" stop-color="#4B382A"/>
+      <stop offset="100%" stop-color="#1A2820"/>
+    </linearGradient>
+    <linearGradient id="mirrorShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="25%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#FFFBEB"/>
+      <stop offset="75%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <clipPath id="leftHalf">
+      <rect x="0" y="0" width="200" height="500"/>
+    </clipPath>
+    <clipPath id="rightHalf">
+      <rect x="200" y="0" width="200" height="500"/>
+    </clipPath>
+  </defs>
+
+  <rect width="400" height="500" rx="24" fill="#1C1917"/>
+
+  <!-- Copper Vessel Shape -->
+  <!-- Left Side: Tarnished Green/Brown Verdigris -->
+  <g clip-path="url(#leftHalf)">
+    <ellipse cx="200" cy="250" rx="140" ry="140" fill="url(#tarnishGrad)"/>
+    <!-- Spots of oxidation -->
+    <circle cx="140" cy="220" r="28" fill="#15803D" opacity="0.4"/>
+    <circle cx="120" cy="280" r="35" fill="#166534" opacity="0.5"/>
+    <circle cx="165" cy="310" r="20" fill="#047857" opacity="0.4"/>
+    <!-- Label -->
+    <rect x="30" y="40" width="80" height="28" rx="14" fill="#000000" opacity="0.6"/>
+    <text x="70" y="58" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#9CA3AF" text-anchor="middle">BEFORE</text>
+    <text x="70" y="100" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#6EE7B7">Heavy Verdigris</text>
+  </g>
+
+  <!-- Right Side: Gleaming Mirror Copper/Brass Finish -->
+  <g clip-path="url(#rightHalf)">
+    <ellipse cx="200" cy="250" rx="140" ry="140" fill="url(#mirrorShine)"/>
+    <!-- Highlight Shimmer -->
+    <polygon points="260,130 290,140 280,370 250,360" fill="#FFFFFF" opacity="0.45"/>
+    <!-- Label -->
+    <rect x="290" y="40" width="80" height="28" rx="14" fill="#C88A58"/>
+    <text x="330" y="58" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">AFTER</text>
+    <text x="330" y="100" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#FDE68A">Mirror Luster</text>
+    
+    <!-- Gleam sparkle -->
+    <g transform="translate(280, 210)">
+      <polygon points="0,-18 4,-4 18,0 4,4 0,18 -4,4 -18,0 -4,-4" fill="#FFFFFF"/>
+      <circle cx="0" cy="0" r="4" fill="#FDE68A"/>
+    </g>
+    <g transform="translate(230, 290)">
+      <polygon points="0,-12 3,-3 12,0 3,3 0,12 -3,3 -12,0 -3,-3" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Center Divider Line -->
+  <line x1="200" y1="50" x2="200" y2="450" stroke="#FFFFFF" stroke-width="2"/>
+  <circle cx="200" cy="250" r="14" fill="#FFFFFF" stroke="#C88A58" stroke-width="3"/>
+  <text x="200" y="254" font-family="sans-serif" font-size="12" font-weight="bold" fill="#C88A58" text-anchor="middle">⇄</text>
+
+  <text x="200" y="475" font-family="-apple-system, Inter, sans-serif" font-size="12" font-weight="600" fill="#D6D3D1" text-anchor="middle">Single application with microfiber buffing</text>
+</svg>

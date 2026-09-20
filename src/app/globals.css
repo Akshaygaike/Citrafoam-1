@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-porcelain: 251 251 253;
+    --color-graphite: 17 24 39;
+    --color-botanical: 21 128 61;
+    --color-emerald: 16 185 129;
+    --color-brass: 200 138 88;
+
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 0, 0, 0.06);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-porcelain text-graphite;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    @apply bg-[#C88A58]/20 text-[#111827];
+  }
+
+  /* Refined scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-graphite/15 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-graphite/30;
+  }
+
+  /* Focus ring for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-botanical ring-0;
+  }
+
+  /* Remove default button styles for consistency */
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Gradient text utility */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #2E7D32 0%, #10B981 50%, #C88A58 100%);
+  }
+
+  .text-gradient-dark {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #1D1D1F 0%, #2E7D32 100%);
+  }
+
+  /* Section spacing */
+  .section-padding {
+    @apply py-20 md:py-28 lg:py-36;
+  }
+
+  .section-padding-sm {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+
+  /* Container */
+  .container-tight {
+    @apply mx-auto max-w-5xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply mx-auto max-w-8xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium tracking-wide;
+  }
+
+  .badge-botanical {
+    @apply badge bg-white/90 backdrop-blur-md text-[#111827] border border-[#C88A58]/30 shadow-sm font-semibold;
+  }
+
+  .badge-brass {
+    @apply badge bg-[#FDF6EF] text-[#B45309] border border-[#C88A58]/30;
+  }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.03) 25%,
+      rgba(0, 0, 0, 0.06) 37%,
+      rgba(0, 0, 0, 0.03) 63%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* Warm Porcelain Studio Lighting (replaces blurry green gradients) */
+  .foam-bg {
+    background-color: #FBFBFD;
+    background-image: radial-gradient(circle at 50% 0%, rgba(200, 138, 88, 0.04) 0%, transparent 60%);
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Text balance utility */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .motion-safe-only {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}

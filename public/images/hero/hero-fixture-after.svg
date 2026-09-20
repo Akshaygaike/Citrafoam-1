@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <!-- Background studio vignette - Crisp warm porcelain studio shadow -->
+    <radialGradient id="studioBgAfter" cx="50%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="55%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+
+    <!-- Liquid Specular Chrome Gradient for Stem -->
+    <linearGradient id="mirrorChromeStem" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="15%" stop-color="#94A3B8" />
+      <stop offset="35%" stop-color="#F8FAFC" />
+      <stop offset="48%" stop-color="#FFFFFF" />
+      <stop offset="65%" stop-color="#E2E8F0" />
+      <stop offset="85%" stop-color="#C88A58" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+
+    <!-- Curved Spout Chrome Gradient -->
+    <linearGradient id="mirrorChromeSpout" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="20%" stop-color="#94A3B8" />
+      <stop offset="45%" stop-color="#FFFFFF" />
+      <stop offset="55%" stop-color="#F8FAFC" />
+      <stop offset="70%" stop-color="#CBD5E1" />
+      <stop offset="88%" stop-color="#C88A58" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+
+    <!-- Warm Polished Copper/Brass Aerator & Accent Collar -->
+    <linearGradient id="polishedCopper" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7C4A2B" />
+      <stop offset="20%" stop-color="#C88A58" />
+      <stop offset="45%" stop-color="#FFFBEB" />
+      <stop offset="65%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#553223" />
+    </linearGradient>
+
+    <!-- Marble Reflection Gradient -->
+    <linearGradient id="marbleCounter" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="40%" stop-color="#1E293B" />
+      <stop offset="60%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Chrome Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Studio Backdrop -->
+  <rect width="800" height="600" fill="url(#studioBgAfter)" />
+
+  <!-- Marble Countertop (Pristine Showroom Polish with mirror reflection) -->
+  <path d="M0,480 L800,480 L800,600 L0,600 Z" fill="url(#marbleCounter)" />
+  <line x1="0" y1="480" x2="800" y2="480" stroke="#475569" stroke-width="1.5" />
+
+  <!-- Specular Reflection of Faucet on polished stone countertop -->
+  <g opacity="0.35" transform="translate(0, 960) scale(1, -1)">
+    <path d="M360,500 L440,500 L435,470 L365,470 Z" fill="url(#polishedCopper)" opacity="0.5" />
+    <rect x="375" y="380" width="50" height="90" fill="url(#mirrorChromeStem)" opacity="0.4" />
+  </g>
+
+  <!-- Crisp Faucet Shadow -->
+  <ellipse cx="405" cy="502" rx="75" ry="12" fill="#000000" opacity="0.85" />
+
+  <!-- Faucet Group -->
+  <g>
+    <!-- Faucet Base Collar (Polished Copper / Rose-Gold ring) -->
+    <path d="M360,500 L440,500 L435,470 L365,470 Z" fill="url(#polishedCopper)" />
+    <!-- Specular rim highlight on base -->
+    <path d="M365,472 L435,472" stroke="#FFFFFF" stroke-width="1.5" opacity="0.9" />
+    <path d="M360,498 L440,498" stroke="#FDE68A" stroke-width="1" opacity="0.8" />
+
+    <!-- Vertical Stem Body (Liquid mirror chrome) -->
+    <rect x="375" y="320" width="50" height="150" fill="url(#mirrorChromeStem)" />
+
+    <!-- Pure Specular White Light Reflection Line on Stem -->
+    <line x1="398" y1="320" x2="398" y2="470" stroke="#FFFFFF" stroke-width="3.5" opacity="0.95" />
+    <line x1="394" y1="320" x2="394" y2="470" stroke="#FFFFFF" stroke-width="1" opacity="0.6" />
+
+    <!-- Handle Socket & Lever (Liquid Chrome & Copper Touch) -->
+    <path d="M425,410 L470,410 L470,430 L425,430 Z" fill="url(#mirrorChromeStem)" />
+    <path d="M465,415 L510,380 L516,386 L470,422 Z" fill="url(#mirrorChromeSpout)" />
+    <circle cx="513" cy="383" r="6" fill="url(#polishedCopper)" />
+    <!-- Lever specular highlight -->
+    <line x1="472" y1="412" x2="510" y2="380" stroke="#FFFFFF" stroke-width="1.5" opacity="0.9" />
+
+    <!-- Curved Gooseneck Spout (Pristine mirror chrome) -->
+    <path d="M375,320 C375,180 340,130 260,130 C190,130 180,200 180,270 L220,270 C220,220 225,170 260,170 C305,170 335,210 335,320 Z" fill="url(#mirrorChromeSpout)" />
+
+    <!-- Crisp Specular Light Flare Arc along outer curve -->
+    <path d="M372,300 C372,185 338,135 260,135 C205,135 185,190 185,260" stroke="#FFFFFF" stroke-width="2.5" fill="none" opacity="0.95" filter="url(#glow)" />
+    <path d="M369,280 C369,190 335,138 260,138" stroke="#FDE68A" stroke-width="1" fill="none" opacity="0.75" />
+
+    <!-- Aerator Tip (Showroom Precision Brass/Chrome Finish) -->
+    <rect x="175" y="270" width="50" height="24" rx="3" fill="url(#polishedCopper)" />
+    <rect x="180" y="294" width="40" height="12" rx="2" fill="url(#mirrorChromeStem)" />
+    <line x1="180" y1="282" x2="225" y2="282" stroke="#FFFBEB" stroke-width="1.5" opacity="0.95" />
+    <line x1="182" y1="298" x2="218" y2="298" stroke="#FFFFFF" stroke-width="1" opacity="0.9" />
+
+    <!-- STARBURST LIGHT FLARES (Apple Style Camera Specular Gleam) -->
+    <!-- Flare 1: On the top apex curve -->
+    <g transform="translate(260, 134)" filter="url(#glow)">
+      <!-- Central gleam -->
+      <polygon points="0,-22 4,-4 22,0 4,4 0,22 -4,4 -22,0 -4,-4" fill="#FFFFFF" opacity="0.95" />
+      <polygon points="0,-12 3,-3 12,0 3,3 0,12 -3,3 -12,0 -3,-3" fill="#FDE68A" />
+      <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" />
+      <circle cx="0" cy="0" r="12" fill="#38BDF8" opacity="0.25" />
+    </g>
+
+    <!-- Flare 2: On the polished copper aerator rim -->
+    <g transform="translate(215, 275)" filter="url(#glow)">
+      <polygon points="0,-16 3,-3 16,0 3,3 0,16 -3,3 -16,0 -3,-3" fill="#FFFFFF" opacity="0.9" />
+      <circle cx="0" cy="0" r="3" fill="#FDE68A" />
+    </g>
+
+    <!-- Flare 3: On the joystick lever tip -->
+    <g transform="translate(513, 383)">
+      <polygon points="0,-12 2,-2 12,0 2,2 0,12 -2,2 -12,0 -2,-2" fill="#FFFFFF" opacity="0.85" />
+      <circle cx="0" cy="0" r="2.5" fill="#C88A58" />
+    </g>
+
+    <!-- Flare 4: On the base collar -->
+    <g transform="translate(425, 475)">
+      <polygon points="0,-10 2,-2 10,0 2,2 0,10 -2,2 -10,0 -2,-2" fill="#FFFFFF" opacity="0.75" />
+    </g>
+  </g>
+</svg>

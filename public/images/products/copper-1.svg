@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="copperBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDF8F3"/>
+      <stop offset="100%" stop-color="#F5E8DC"/>
+    </linearGradient>
+    <linearGradient id="metallicBottle" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#DE935F"/>
+      <stop offset="25%" stop-color="#EBB68C"/>
+      <stop offset="50%" stop-color="#F5CEAB"/>
+      <stop offset="75%" stop-color="#C87A48"/>
+      <stop offset="100%" stop-color="#9C5228"/>
+    </linearGradient>
+    <linearGradient id="metalCap" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2D2018"/>
+      <stop offset="50%" stop-color="#543D2F"/>
+      <stop offset="100%" stop-color="#221710"/>
+    </linearGradient>
+    <filter id="copperShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#4A2608" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="500" fill="url(#copperBg)" rx="24"/>
+
+  <!-- Bottle Silhouette Group -->
+  <g filter="url(#copperShadow)" transform="translate(125, 75)">
+    <!-- Dispenser Cap -->
+    <rect x="58" y="30" width="34" height="24" rx="4" fill="url(#metalCap)"/>
+    <rect x="62" y="16" width="26" height="14" rx="2" fill="#1D1D1F"/>
+    <circle cx="75" cy="23" r="2" fill="#DE935F"/>
+
+    <!-- Neck Ribbing -->
+    <rect x="55" y="54" width="40" height="10" rx="1" fill="#C88A58"/>
+
+    <!-- Bottle Body (Amber/Brushed Metallic Jar/Bottle) -->
+    <path d="M55,64 C42,78 35,98 35,130 L35,280 C35,296 45,306 60,306 L90,306 C105,306 115,296 115,280 L115,130 C115,98 108,78 95,64 Z" fill="url(#metallicBottle)"/>
+
+    <!-- Specular Highlight Strip -->
+    <path d="M48,130 C48,102 54,84 62,72 L67,76 C60,88 56,104 56,130 L56,275 C56,282 52,286 48,286 Z" fill="#FFFFFF" opacity="0.45"/>
+
+    <!-- Editorial Label -->
+    <rect x="44" y="115" width="62" height="130" rx="4" fill="#FFFFFF" stroke="#E5D6C5" stroke-width="0.75"/>
+
+    <!-- Label Content -->
+    <text x="75" y="135" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, sans-serif" font-size="9" font-weight="800" fill="#1D1D1F" text-anchor="middle" letter-spacing="1.5">CITRAFOAM</text>
+    <line x1="56" y1="141" x2="94" y2="141" stroke="#C88A58" stroke-width="1.2"/>
+
+    <text x="75" y="155" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, sans-serif" font-size="7.5" font-weight="700" fill="#C87A48" text-anchor="middle">COPPER &amp; BRASS</text>
+    <text x="75" y="165" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, sans-serif" font-size="7" font-weight="600" fill="#1D1D1F" text-anchor="middle">BRILLIANT POLISH</text>
+
+    <!-- Brass Seal Icon -->
+    <circle cx="75" cy="182" r="9" fill="#FFF9F5" stroke="#C88A58" stroke-width="0.75"/>
+    <text x="75" y="185" font-size="7.5" fill="#C87A48" text-anchor="middle">✦</text>
+
+    <text x="75" y="202" font-family="-apple-system, BlinkMacSystemFont, Inter, sans-serif" font-size="5" font-weight="600" fill="#8C6E5A" text-anchor="middle">FOOD-GRADE CITRIC FORMULA</text>
+    <text x="75" y="211" font-family="-apple-system, BlinkMacSystemFont, Inter, sans-serif" font-size="4.5" fill="#A89484" text-anchor="middle">REVERSES OXIDATION &amp; TARNISH</text>
+
+    <!-- Volume -->
+    <rect x="62" y="222" width="26" height="9" rx="2" fill="#FBF6F1"/>
+    <text x="75" y="228" font-family="-apple-system, BlinkMacSystemFont, Inter, sans-serif" font-size="5" font-weight="700" fill="#4B382A" text-anchor="middle">250 ML</text>
+  </g>
+
+  <!-- Brass Polish Specular Sparkles -->
+  <g transform="translate(100, 190)">
+    <polygon points="0,-10 2,-2 10,0 2,2 0,10 -2,2 -10,0 -2,-2" fill="#F5CEAB"/>
+    <circle cx="0" cy="0" r="2" fill="#FFFFFF"/>
+  </g>
+  <g transform="translate(290, 240)">
+    <polygon points="0,-8 2,-2 8,0 2,2 0,8 -2,2 -8,0 -2,-2" fill="#DE935F"/>
+    <circle cx="0" cy="0" r="1.5" fill="#FFFFFF"/>
+  </g>
+</svg>
