@@ -12,6 +12,8 @@ export const metadata = {
     "Premium citric acid-powered foam cleaners that dissolve limescale, restore copper & brass, and leave every surface sparkling.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   // Fetch featured products with variants
   const dbProducts = await prisma.product.findMany({
