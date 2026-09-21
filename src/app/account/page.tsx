@@ -95,6 +95,29 @@ export default async function AccountPage() {
         </form>
       </div>
 
+      {/* Admin Order Management Banner */}
+      {user?.role === 'ADMIN' && (
+        <div className="mb-10 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-transparent p-6 sm:p-7 rounded-3xl border border-amber-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                Admin Controls
+              </span>
+            </div>
+            <h2 className="text-xl font-display font-bold text-graphite">Customer Orders &amp; Fulfillment Manager</h2>
+            <p className="text-xs text-neutral-600 mt-1 max-w-xl">
+              You have administrator privileges. Update customer order statuses (Unfulfilled, Processing, Shipped, Delivered) and set courier tracking AWB numbers in real time.
+            </p>
+          </div>
+          <Link
+            href="/admin/orders"
+            className="px-6 py-3 bg-[#111827] hover:bg-black text-white text-xs font-bold rounded-2xl shadow-sm transition-all whitespace-nowrap"
+          >
+            Manage Customer Orders →
+          </Link>
+        </div>
+      )}
+
       {/* Navigation Quick Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {links.map((link) => (
