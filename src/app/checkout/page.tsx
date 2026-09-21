@@ -31,14 +31,17 @@ export default function CheckoutPage() {
     lastName: '',
     email: '',
     phone: '',
-    line1: 'B-304, Palm Grove Heights',
-    line2: 'Indiranagar',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    zip: '560038',
+    line1: '',
+    line2: '',
+    city: '',
+    state: '',
+    zip: '',
     country: 'IN',
     paymentMethod: 'cod' as 'card' | 'cod',
   });
+
+  const [isLookingUpPin, setIsLookingUpPin] = useState(false);
+  const [pinLookupMsg, setPinLookupMsg] = useState('');
 
   useEffect(() => {
     fetch('/api/auth/session')
@@ -50,28 +53,14 @@ export default function CheckoutPage() {
           const last = parts.slice(1).join(' ') || '';
           setFormData((prev) => ({
             ...prev,
-            firstName: first || prev.firstName || 'Customer',
-            lastName: last || prev.lastName,
-            email: data.user.email || prev.email,
-          }));
-        } else {
-          setFormData((prev) => ({
-            ...prev,
-            firstName: prev.firstName || 'Priya',
-            lastName: prev.lastName || 'Sharma',
-            email: prev.email || 'priya.sharma@example.com',
-            phone: prev.phone || '+91-9876543210',
+            firstName: prev.firstName || first,
+            lastName: prev.lastName || last,
+            email: prev.email || data.user.email,
           }));
         }
       })
       .catch(() => {
-        setFormData((prev) => ({
-          ...prev,
-          firstName: prev.firstName || 'Priya',
-          lastName: prev.lastName || 'Sharma',
-          email: prev.email || 'priya.sharma@example.com',
-          phone: prev.phone || '+91-9876543210',
-        }));
+        // Leave fields blank for unauthenticated visitors
       });
   }, []);
 
@@ -79,6 +68,49 @@ export default function CheckoutPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleZipChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawVal = e.target.value;
+    const cleanDigits = rawVal.replace(/\D/g, '').slice(0, 6);
+    setFormData((prev) => ({ ...prev, zip: cleanDigits }));
+
+    if (cleanDigits.length === 6) {
+      setIsLookingUpPin(true);
+      setPinLookupMsg('Detecting city & state...');
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${cleanDigits}`);
+        const data = await res.json();
+        if (
+          Array.isArray(data) &&
+          data[0] &&
+          data[0].Status === 'Success' &&
+          Array.isArray(data[0].PostOffice) &&
+          data[0].PostOffice.length > 0
+        ) {
+          const po = data[0].PostOffice[0];
+          const detectedCity = po.District || po.Block || po.Circle || '';
+          const detectedState = po.State || '';
+
+          setFormData((prev) => ({
+            ...prev,
+            city: detectedCity || prev.city,
+            state: detectedState || prev.state,
+          }));
+          setPinLookupMsg(`Detected: ${detectedCity}${detectedState ? ', ' + detectedState : ''}`);
+        } else {
+          setPinLookupMsg('PIN code not found. Please enter city & state manually.');
+        }
+      } catch (err) {
+        console.error('Pincode lookup error:', err);
+        setPinLookupMsg('Could not fetch location. Please enter city & state manually.');
+      } finally {
+        setIsLookingUpPin(false);
+      }
+    } else {
+      setPinLookupMsg('');
+      setIsLookingUpPin(false);
+    }
   };
 
   const handleNextStep = (e: React.FormEvent) => {
@@ -265,6 +297,7 @@ export default function CheckoutPage() {
                     <input
                       required
                       name="firstName"
+                      placeholder="e.g. Rahul"
                       value={formData.firstName}
                       onChange={handleChange}
                       type="text"
@@ -278,6 +311,7 @@ export default function CheckoutPage() {
                     <input
                       required
                       name="lastName"
+                      placeholder="e.g. Sharma"
                       value={formData.lastName}
                       onChange={handleChange}
                       type="text"
@@ -294,6 +328,7 @@ export default function CheckoutPage() {
                     <input
                       required
                       name="email"
+                      placeholder="e.g. rahul@example.com"
                       value={formData.email}
                       onChange={handleChange}
                       type="email"
@@ -307,6 +342,7 @@ export default function CheckoutPage() {
                     <input
                       required
                       name="phone"
+                      placeholder="e.g. 9876543210"
                       value={formData.phone}
                       onChange={handleChange}
                       type="tel"
@@ -322,6 +358,7 @@ export default function CheckoutPage() {
                   <input
                     required
                     name="line1"
+                    placeholder="House / Flat / Block No., Street, Area"
                     value={formData.line1}
                     onChange={handleChange}
                     type="text"
@@ -335,6 +372,7 @@ export default function CheckoutPage() {
                   </label>
                   <input
                     name="line2"
+                    placeholder="Apartment, suite, unit, landmark (optional)"
                     value={formData.line2}
                     onChange={handleChange}
                     type="text"
@@ -342,7 +380,29 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-graphite/70 mb-1.5">
+                      PIN Code
+                    </label>
+                    <div className="relative">
+                      <input
+                        required
+                        name="zip"
+                        value={formData.zip}
+                        onChange={handleZipChange}
+                        placeholder="6-digit PIN"
+                        type="text"
+                        maxLength={6}
+                        className="w-full px-3 py-3 rounded-xl border border-graphite/20 outline-none focus:border-botanical-500 bg-transparent text-sm pr-8"
+                      />
+                      {isLookingUpPin && (
+                        <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                          <Loader2 className="w-4 h-4 text-botanical-600 animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-graphite/70 mb-1.5">
                       City
@@ -350,6 +410,7 @@ export default function CheckoutPage() {
                     <input
                       required
                       name="city"
+                      placeholder="City / District"
                       value={formData.city}
                       onChange={handleChange}
                       type="text"
@@ -363,26 +424,31 @@ export default function CheckoutPage() {
                     <input
                       required
                       name="state"
+                      placeholder="State"
                       value={formData.state}
                       onChange={handleChange}
                       type="text"
                       className="w-full px-3 py-3 rounded-xl border border-graphite/20 outline-none focus:border-botanical-500 bg-transparent text-sm"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-graphite/70 mb-1.5">
-                      PIN Code
-                    </label>
-                    <input
-                      required
-                      name="zip"
-                      value={formData.zip}
-                      onChange={handleChange}
-                      type="text"
-                      className="w-full px-3 py-3 rounded-xl border border-graphite/20 outline-none focus:border-botanical-500 bg-transparent text-sm"
-                    />
-                  </div>
                 </div>
+
+                {pinLookupMsg && (
+                  <p
+                    className={`text-xs flex items-center gap-1.5 px-3 py-2 rounded-xl border transition-all ${
+                      pinLookupMsg.includes('not found') || pinLookupMsg.includes('Could not')
+                        ? 'text-amber-800 bg-amber-50 border-amber-200'
+                        : 'text-botanical-700 bg-botanical-50/70 border-botanical-200'
+                    }`}
+                  >
+                    {pinLookupMsg.includes('not found') || pinLookupMsg.includes('Could not') ? (
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    ) : (
+                      <CheckCircle className="w-4 h-4 flex-shrink-0 text-botanical-600" />
+                    )}
+                    <span>{pinLookupMsg}</span>
+                  </p>
+                )}
 
                 <button
                   type="submit"
@@ -413,7 +479,7 @@ export default function CheckoutPage() {
                       <p className="font-semibold text-graphite">
                         {formData.firstName} {formData.lastName} ({formData.phone})
                       </p>
-                      <p>{formData.line1}, {formData.line2}</p>
+                      <p>{formData.line1}{formData.line2 ? `, ${formData.line2}` : ''}</p>
                       <p>
                         {formData.city}, {formData.state} {formData.zip}
                       </p>
