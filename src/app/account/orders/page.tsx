@@ -79,7 +79,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   });
 
   return (
-    <div className="container-tight py-12 min-h-screen">
+    <div className="container-tight pt-28 pb-16 min-h-screen">
       {/* Header & Back Link */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>

@@ -148,7 +148,7 @@ export default function CheckoutPage() {
 
   if (placedOrder) {
     return (
-      <div className="container-tight py-16 text-center min-h-[75vh] flex flex-col items-center justify-center">
+      <div className="container-tight pt-28 pb-16 text-center min-h-[75vh] flex flex-col items-center justify-center">
         <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4 border border-emerald-200/60 shadow-sm">
           <CheckCircle className="w-8 h-8" />
         </div>
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="bg-porcelain min-h-screen py-12">
+    <div className="bg-porcelain min-h-screen pt-28 pb-16">
       <div className="container-wide">
         {/* Stepper */}
         <div className="flex items-center justify-center gap-4 mb-12">

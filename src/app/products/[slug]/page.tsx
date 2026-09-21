@@ -127,7 +127,7 @@ export default async function ProductDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="container-wide py-12">
+    <div className="container-wide pt-28 pb-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 mb-24">
         <div className="relative">
           <ProductGallery product={product} />

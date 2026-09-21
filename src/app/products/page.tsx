@@ -42,7 +42,7 @@ export default async function ProductsPage({
   }
 
   return (
-    <div className="container-wide py-16">
+    <div className="container-wide pt-28 pb-16">
       <div className="text-center mb-12">
         <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-[#C88A58]/30 shadow-sm text-xs font-semibold text-[#111827] tracking-wide mb-3">
           Surface-Specific Science

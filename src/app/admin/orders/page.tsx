@@ -67,7 +67,7 @@ export default async function AdminOrdersPage() {
   const deliveredCount = orders.filter((o) => o.fulfillmentStatus === 'DELIVERED').length;
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 min-h-screen">
       {/* Top Breadcrumb & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>

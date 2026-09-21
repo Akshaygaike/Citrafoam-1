@@ -56,7 +56,7 @@ export default async function AccountPage() {
   ];
 
   return (
-    <div className="container-tight py-12 min-h-screen">
+    <div className="container-tight pt-28 pb-16 min-h-screen">
       {/* Header Profile Section */}
       <div className="mb-10 p-8 rounded-3xl glass border border-white/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>

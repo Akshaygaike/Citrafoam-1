@@ -35,7 +35,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container-wide py-16">
+    <div className="container-wide pt-28 pb-16">
       <h1 className="font-display text-display-md text-graphite mb-10">Shopping Cart</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
