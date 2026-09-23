@@ -5,6 +5,7 @@ import { ProductWithVariants } from '@/types';
 import ProductGallery from '@/components/modules/pdp/ProductGallery';
 import ProductInfo from '@/components/modules/pdp/ProductInfo';
 import HowItWorks from '@/components/modules/pdp/HowItWorks';
+import ProductReviews from '@/components/modules/pdp/ProductReviews';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {
@@ -69,11 +70,16 @@ export async function generateMetadata(
 }
 
 export default async function ProductDetailPage({ params }: Props) {
+  const reviewsInclude = {
+    where: { isApproved: true },
+    orderBy: { createdAt: 'desc' as const },
+  };
+
   let product = await prisma.product.findUnique({
     where: { slug: params.slug },
     include: {
       variants: true,
-      reviews: true,
+      reviews: reviewsInclude,
     }
   }) as unknown as ProductWithVariants | null;
 
@@ -87,7 +93,7 @@ export default async function ProductDetailPage({ params }: Props) {
       },
       include: {
         variants: true,
-        reviews: true,
+        reviews: reviewsInclude,
       }
     }) as unknown as ProductWithVariants | null;
   }
@@ -102,7 +108,7 @@ export default async function ProductDetailPage({ params }: Props) {
       },
       include: {
         variants: true,
-        reviews: true,
+        reviews: reviewsInclude,
       }
     }) as unknown as ProductWithVariants | null;
   }
@@ -117,7 +123,7 @@ export default async function ProductDetailPage({ params }: Props) {
       },
       include: {
         variants: true,
-        reviews: true,
+        reviews: reviewsInclude,
       }
     }) as unknown as ProductWithVariants | null;
   }
@@ -128,7 +134,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <div className="container-wide pt-28 pb-16">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 mb-24">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 mb-20">
         <div className="relative">
           <ProductGallery product={product} />
         </div>
@@ -137,8 +143,16 @@ export default async function ProductDetailPage({ params }: Props) {
         </div>
       </div>
       
-      <div>
+      <div className="mb-20">
         <HowItWorks />
+      </div>
+
+      <div id="customer-reviews">
+        <ProductReviews
+          productId={product.id}
+          productTitle={product.title}
+          reviews={product.reviews}
+        />
       </div>
     </div>
   );
