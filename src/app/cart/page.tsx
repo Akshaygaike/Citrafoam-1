@@ -160,14 +160,14 @@ export default function CartPage() {
             </Link>
 
             <div className="mt-6 space-y-2.5 text-xs text-graphite/70 font-medium">
-              <div className="flex items-center gap-2">
-                <Truck className="w-4 h-4 text-[#C88A58]" />
-                <span>Express courier dispatch within 24 hours</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#C88A58]" />
-                <span>30-Day Risk-Free Shine Guarantee</span>
-              </div>
+              <Link href="/shipping" className="flex items-center gap-2 hover:text-graphite transition-colors group">
+                <Truck className="w-4 h-4 text-[#C88A58] group-hover:scale-110 transition-transform" />
+                <span className="group-hover:underline">Express courier dispatch within 24 hours</span>
+              </Link>
+              <Link href="/returns" className="flex items-center gap-2 hover:text-graphite transition-colors group">
+                <ShieldCheck className="w-4 h-4 text-[#C88A58] group-hover:scale-110 transition-transform" />
+                <span className="group-hover:underline">100% Transit Guarantee &amp; Easy Returns</span>
+              </Link>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
                 <span>100% Non-Toxic &amp; Plant-Derived</span>

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Instagram, Twitter, Facebook, Youtube } from 'lucide-react';
+import { Instagram } from 'lucide-react';
 import { footerLinks } from '@/lib/constants';
 
 export function Footer() {
@@ -22,19 +22,17 @@ export function Footer() {
             <p className="text-gray-400 text-sm max-w-xs">
               Premium, citric acid-powered foam cleaners for a scientifically cleaner home.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex items-center">
               <a
                 href="https://www.instagram.com/citrafoam.co?stkn=MTJubGd4YjZ2czd5aA%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 transition-all text-xs font-medium group"
                 aria-label="Citrafoam on Instagram"
               >
-                <Instagram className="w-5 h-5" />
+                <Instagram className="w-4 h-4 text-[#00AA55] group-hover:scale-110 transition-transform" />
+                <span>Instagram (@citrafoam.co)</span>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter"><Twitter className="w-5 h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Facebook"><Facebook className="w-5 h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors" aria-label="Youtube"><Youtube className="w-5 h-5" /></a>
             </div>
           </div>
 
