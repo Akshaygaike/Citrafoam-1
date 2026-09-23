@@ -8,10 +8,12 @@ import { navLinks } from '@/lib/constants';
 import { useCartStore } from '@/store/cart-store';
 import { MobileMenu } from './MobileMenu';
 import { CartDrawer } from './CartDrawer';
+import { SearchModal } from '@/components/modules/search/SearchModal';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const { items, isOpen: cartOpen, openCart, closeCart } = useCartStore();
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
@@ -22,6 +24,18 @@ export function Navbar() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Global Ctrl+K / Cmd+K search shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   return (
@@ -72,13 +86,14 @@ export function Navbar() {
 
           {/* Icons */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <Link
-              href="/products"
-              className="p-2 text-graphite/80 hover:text-graphite transition-colors hidden sm:block"
-              aria-label="Search"
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-2 text-graphite/80 hover:text-graphite transition-colors flex items-center justify-center cursor-pointer rounded-full hover:bg-black/5"
+              aria-label="Search formulas (Ctrl+K)"
+              title="Search formulas (Ctrl+K)"
             >
               <Search className="w-5 h-5" />
-            </Link>
+            </button>
             <Link
               href="/account"
               className="p-2 text-graphite/80 hover:text-graphite transition-colors hidden sm:block"
@@ -102,8 +117,13 @@ export function Navbar() {
         </div>
       </header>
 
-      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <MobileMenu 
+        isOpen={mobileMenuOpen} 
+        onClose={() => setMobileMenuOpen(false)} 
+        onOpenSearch={() => setSearchOpen(true)} 
+      />
       <CartDrawer isOpen={cartOpen} onClose={closeCart} />
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

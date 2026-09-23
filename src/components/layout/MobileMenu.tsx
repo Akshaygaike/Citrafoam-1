@@ -9,9 +9,10 @@ import { navLinks } from '@/lib/constants';
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenSearch?: () => void;
 }
 
-export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+export function MobileMenu({ isOpen, onClose, onOpenSearch }: MobileMenuProps) {
   const menuVariants = {
     hidden: { x: '-100%' },
     visible: { x: 0, transition: { type: 'tween', duration: 0.3, ease: 'easeOut' } },
@@ -81,10 +82,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </div>
 
             <div className="p-6 border-t border-gray-200 bg-gray-50 flex flex-col space-y-4">
-              <Link href="/search" onClick={onClose} className="flex items-center space-x-3 text-graphite font-medium">
+              <button 
+                onClick={() => {
+                  onClose();
+                  onOpenSearch?.();
+                }} 
+                className="flex items-center space-x-3 text-graphite font-medium hover:text-[#00AA55] transition-colors text-left w-full cursor-pointer"
+              >
                 <Search className="w-5 h-5" />
-                <span>Search</span>
-              </Link>
+                <span>Search Formulas</span>
+              </button>
               <Link href="/account" onClick={onClose} className="flex items-center space-x-3 text-graphite font-medium">
                 <User className="w-5 h-5" />
                 <span>Account</span>

@@ -40,7 +40,6 @@ export const footerLinks = {
   company: [
     { label: "Our Story", href: "/about" },
     { label: "Ingredients", href: "/#science" },
-    { label: "Blog", href: "/blog" },
   ],
   support: [
     { label: "Contact Us", href: "/contact" },
