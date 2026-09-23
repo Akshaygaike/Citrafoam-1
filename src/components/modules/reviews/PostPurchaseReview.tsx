@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Star, CheckCircle, Sparkles, MessageSquare, Loader2 } from 'lucide-react';
+import { Star, CheckCircle, Sparkles, MessageSquare, Loader2, Camera, Play, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ReviewMediaItem, processMediaFile } from '@/lib/media-utils';
 
 export interface PurchasedProductItem {
   productId: string;
@@ -32,6 +33,8 @@ export default function PostPurchaseReview({
   const [headline, setHeadline] = useState<string>('');
   const [comment, setComment] = useState<string>('');
   const [authorName, setAuthorName] = useState<string>(defaultAuthorName);
+  const [attachedMedia, setAttachedMedia] = useState<ReviewMediaItem[]>([]);
+  const [isUploadingMedia, setIsUploadingMedia] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submittedIds, setSubmittedIds] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -48,6 +51,35 @@ export default function PostPurchaseReview({
     3: '3 - Satisfactory',
     4: '4 - Very effective',
     5: '5 - Exceptional laboratory quality',
+  };
+
+  const handleMediaSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    if (attachedMedia.length + files.length > 5) {
+      setErrorMessage('You can attach up to 5 photos and video clips.');
+      return;
+    }
+
+    setIsUploadingMedia(true);
+    setErrorMessage(null);
+
+    try {
+      const processed = await Promise.all(
+        files.map((file) => processMediaFile(file))
+      );
+      setAttachedMedia((prev) => [...prev, ...processed]);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Error processing media file.');
+    } finally {
+      setIsUploadingMedia(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeAttachedMedia = (index: number) => {
+    setAttachedMedia((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,6 +107,7 @@ export default function PostPurchaseReview({
           comment: comment.trim(),
           authorName: authorName.trim(),
           verifiedPurchase: true,
+          images: attachedMedia.length > 0 ? attachedMedia : null,
         }),
       });
 
@@ -87,6 +120,7 @@ export default function PostPurchaseReview({
       setSubmittedIds((prev) => [...prev, currentItem.productId]);
       setHeadline('');
       setComment('');
+      setAttachedMedia([]);
     } catch (err: any) {
       setErrorMessage(err.message || 'Submission failed. Please try again.');
     } finally {
@@ -287,6 +321,69 @@ export default function PostPurchaseReview({
                 placeholder="Describe surface performance, fragrance, dwell time, and overall clean..."
                 className="w-full px-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#C88A58]/20 focus:border-[#C88A58] transition-all resize-none"
               />
+            </div>
+
+            {/* Photos & Videos Upload */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1.5">
+                Attach Photos / Video <span className="font-normal text-neutral-400">(Optional)</span>
+              </label>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-neutral-300 hover:border-[#C88A58] bg-neutral-50 text-xs font-medium text-[#111827] cursor-pointer transition-all">
+                  <Camera className="w-4 h-4 text-[#C88A58]" />
+                  <span>Upload Photos / Video</span>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={handleMediaSelect}
+                    disabled={isUploadingMedia}
+                    className="hidden"
+                  />
+                </label>
+
+                {isUploadingMedia && (
+                  <div className="flex items-center gap-1.5 text-xs text-[#C88A58]">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Processing media...</span>
+                  </div>
+                )}
+              </div>
+
+              {attachedMedia.length > 0 && (
+                <div className="flex flex-wrap gap-2.5 mt-3">
+                  {attachedMedia.map((media, idx) => (
+                    <div
+                      key={idx}
+                      className="relative w-16 h-16 rounded-xl overflow-hidden border border-neutral-200 bg-neutral-900 shadow-xs"
+                    >
+                      {media.type === 'video' ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-white text-center p-1 relative">
+                          <video
+                            src={media.url}
+                            className="absolute inset-0 w-full h-full object-cover opacity-60"
+                          />
+                          <Play className="w-3.5 h-3.5 fill-white relative z-10" />
+                          <span className="text-[8px] font-bold mt-0.5 relative z-10">Video</span>
+                        </div>
+                      ) : (
+                        <img
+                          src={media.url}
+                          alt="Uploaded preview"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeAttachedMedia(idx)}
+                        className="absolute top-1 right-1 w-4 h-4 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center z-20 text-[10px]"
+                      >
+                        <X className="w-2.5 h-2.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {errorMessage && (

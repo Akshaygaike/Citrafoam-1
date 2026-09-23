@@ -6,18 +6,20 @@ import {
   Star,
   CheckCircle,
   ThumbsUp,
-  MessageSquare,
   ShieldCheck,
-  ChevronDown,
   Filter,
   Loader2,
-  Sparkles,
   AlertCircle,
   X,
   PlusCircle,
+  Camera,
+  Play,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ReviewMediaItem, parseReviewMedia, processMediaFile } from '@/lib/media-utils';
+import ReviewMediaModal from '@/components/modules/reviews/ReviewMediaModal';
 
 interface ProductReviewsProps {
   reviews: ReviewData[];
@@ -34,9 +36,16 @@ export default function ProductReviews({
   const [showForm, setShowForm] = useState(false);
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [filterVerifiedOnly, setFilterVerifiedOnly] = useState(false);
+  const [filterWithMediaOnly, setFilterWithMediaOnly] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
   const [helpfulMap, setHelpfulMap] = useState<Record<string, number>>({});
   const [votedMap, setVotedMap] = useState<Record<string, boolean>>({});
+
+  // Media Modal Viewer State
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeMediaList, setActiveMediaList] = useState<ReviewMediaItem[]>([]);
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const [activeReviewMeta, setActiveReviewMeta] = useState<any>(null);
 
   // Form State
   const [rating, setRating] = useState(5);
@@ -44,6 +53,8 @@ export default function ProductReviews({
   const [headline, setHeadline] = useState('');
   const [comment, setComment] = useState('');
   const [authorName, setAuthorName] = useState('');
+  const [attachedMedia, setAttachedMedia] = useState<ReviewMediaItem[]>([]);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{
     type: 'success' | 'error';
@@ -55,7 +66,7 @@ export default function ProductReviews({
     fetch(`/api/reviews?productId=${productId}`)
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setReviews(data);
         }
       })
@@ -85,12 +96,29 @@ export default function ProductReviews({
     return counts;
   }, [reviews]);
 
+  // Aggregate all customer photos & videos for the top gallery (Amazon style)
+  const allCustomerMedia = useMemo(() => {
+    const list: { media: ReviewMediaItem; review: ReviewData }[] = [];
+    reviews.forEach((r) => {
+      const items = parseReviewMedia(r.images);
+      items.forEach((m) => {
+        list.push({ media: m, review: r });
+      });
+    });
+    return list;
+  }, [reviews]);
+
+  const reviewsWithMediaCount = useMemo(() => {
+    return reviews.filter((r) => parseReviewMedia(r.images).length > 0).length;
+  }, [reviews]);
+
   // Filtered & Sorted Reviews
   const filteredReviews = useMemo(() => {
     return reviews
       .filter((r) => {
         if (filterRating !== null && r.rating !== filterRating) return false;
         if (filterVerifiedOnly && !r.verifiedPurchase) return false;
+        if (filterWithMediaOnly && parseReviewMedia(r.images).length === 0) return false;
         return true;
       })
       .sort((a, b) => {
@@ -99,7 +127,7 @@ export default function ProductReviews({
         // Default 'recent'
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
-  }, [reviews, filterRating, filterVerifiedOnly, sortBy]);
+  }, [reviews, filterRating, filterVerifiedOnly, filterWithMediaOnly, sortBy]);
 
   const handleHelpfulClick = (reviewId: string) => {
     if (votedMap[reviewId]) return;
@@ -111,6 +139,41 @@ export default function ProductReviews({
       ...prev,
       [reviewId]: true,
     }));
+  };
+
+  const handleMediaSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    if (attachedMedia.length + files.length > 5) {
+      setSubmitMessage({
+        type: 'error',
+        text: 'You can attach up to 5 photos and video clips per review.',
+      });
+      return;
+    }
+
+    setIsUploadingMedia(true);
+    setSubmitMessage(null);
+
+    try {
+      const processed = await Promise.all(
+        files.map((file) => processMediaFile(file))
+      );
+      setAttachedMedia((prev) => [...prev, ...processed]);
+    } catch (err: any) {
+      setSubmitMessage({
+        type: 'error',
+        text: err.message || 'Error processing media file.',
+      });
+    } finally {
+      setIsUploadingMedia(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeAttachedMedia = (index: number) => {
+    setAttachedMedia((prev) => prev.filter((_, i) => i !== index));
   };
 
   const ratingLabels: Record<number, string> = {
@@ -152,6 +215,7 @@ export default function ProductReviews({
           comment: comment.trim(),
           authorName: authorName.trim(),
           verifiedPurchase: true,
+          images: attachedMedia.length > 0 ? attachedMedia : null,
         }),
       });
 
@@ -168,7 +232,7 @@ export default function ProductReviews({
         rating: Number(rating),
         headline: headline.trim() || null,
         comment: comment.trim(),
-        images: null,
+        images: attachedMedia.length > 0 ? JSON.stringify(attachedMedia) : null,
         verifiedPurchase: true,
         isApproved: true,
         authorName: authorName.trim(),
@@ -183,6 +247,7 @@ export default function ProductReviews({
       setHeadline('');
       setComment('');
       setAuthorName('');
+      setAttachedMedia([]);
       setTimeout(() => {
         setShowForm(false);
         setSubmitMessage(null);
@@ -219,6 +284,16 @@ export default function ProductReviews({
       id="customer-reviews"
       className="py-16 border-t border-neutral-200/80 scroll-mt-24"
     >
+      {/* Lightbox Media Modal */}
+      <ReviewMediaModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        mediaList={activeMediaList}
+        currentIndex={activeMediaIndex}
+        onNavigate={(idx) => setActiveMediaIndex(idx)}
+        reviewMeta={activeReviewMeta}
+      />
+
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-neutral-200/70">
         <div>
@@ -238,6 +313,69 @@ export default function ProductReviews({
           <span>100% Verified Buyer Community</span>
         </div>
       </div>
+
+      {/* Amazon-style "Reviews with Images & Videos" Strip */}
+      {allCustomerMedia.length > 0 && (
+        <div className="mb-12 bg-white p-6 rounded-3xl border border-neutral-200/80 shadow-xs">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-display font-bold text-sm sm:text-base text-graphite flex items-center gap-2">
+              <Camera className="w-4 h-4 text-botanical-600" />
+              Customer Photos &amp; Videos ({allCustomerMedia.length})
+            </h3>
+            <span className="text-xs text-graphite/50">Click to enlarge</span>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+            {allCustomerMedia.map((item, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  const mediaList = allCustomerMedia.map((x) => x.media);
+                  setActiveMediaList(mediaList);
+                  setActiveMediaIndex(idx);
+                  const r = item.review;
+                  setActiveReviewMeta({
+                    authorName: r.authorName,
+                    rating: r.rating,
+                    headline: r.headline,
+                    comment: r.comment,
+                    verifiedPurchase: r.verifiedPurchase,
+                    date: new Date(r.createdAt).toLocaleDateString('en-IN', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    }),
+                  });
+                  setModalOpen(true);
+                }}
+                className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-neutral-200 hover:border-botanical-500 hover:shadow-md transition-all group/item cursor-pointer flex-shrink-0 bg-neutral-900"
+              >
+                {item.media.type === 'video' ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-neutral-900 text-white p-2 text-center relative">
+                    <video
+                      src={item.media.url}
+                      className="absolute inset-0 w-full h-full object-cover opacity-60"
+                    />
+                    <div className="w-7 h-7 rounded-full bg-black/70 flex items-center justify-center text-white relative z-10 group-hover/item:scale-110 transition-transform">
+                      <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
+                    </div>
+                    <span className="text-[9px] font-bold bg-black/80 px-1.5 py-0.5 rounded text-white mt-1 relative z-10">
+                      Video
+                    </span>
+                  </div>
+                ) : (
+                  <img
+                    src={item.media.url}
+                    alt="Customer upload"
+                    className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
         {/* Left Column: Amazon/Flipkart Ratings Summary & Breakdown (4 Cols) */}
@@ -355,14 +493,13 @@ export default function ProductReviews({
               Review this product
             </h3>
             <p className="text-xs text-graphite/70 leading-relaxed">
-              Share your cleaning results, stain removal photos, and experience
+              Share your cleaning results, stain removal photos, videos, and experience
               with fellow homeowners.
             </p>
             <button
               onClick={() => {
                 setShowForm(!showForm);
                 if (!showForm) {
-                  // scroll into form view on mobile
                   setTimeout(() => {
                     document
                       .getElementById('write-review-form')
@@ -380,7 +517,7 @@ export default function ProductReviews({
 
         {/* Right Column: Filters & Reviews List (8 Cols) */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Interactive Review Form */}
+          {/* Interactive Review Form with Photo & Video Upload */}
           <AnimatePresence>
             {showForm && (
               <motion.div
@@ -490,6 +627,82 @@ export default function ProductReviews({
                     />
                   </div>
 
+                  {/* Photo & Video Upload Area (Amazon/Flipkart style) */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-graphite/70 mb-1.5">
+                      Add Photos or Video (Optional)
+                    </label>
+                    <p className="text-xs text-graphite/50 mb-2.5">
+                      Show your cleaning results, before &amp; after surfaces, or foam spray in action.
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-neutral-300 hover:border-botanical-500 bg-neutral-50/60 hover:bg-neutral-50 text-graphite text-xs font-medium cursor-pointer transition-all">
+                        <Camera className="w-4 h-4 text-botanical-600" />
+                        <span>Upload Photos / Video</span>
+                        <input
+                          type="file"
+                          accept="image/*,video/*"
+                          multiple
+                          onChange={handleMediaSelect}
+                          className="hidden"
+                          disabled={isUploadingMedia}
+                        />
+                      </label>
+
+                      {isUploadingMedia && (
+                        <div className="flex items-center gap-1.5 text-xs text-botanical-600 font-medium">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Processing media...</span>
+                        </div>
+                      )}
+
+                      <span className="text-xs text-graphite/40">
+                        Max 5 files (JPG, PNG, MP4, WebM up to 15MB)
+                      </span>
+                    </div>
+
+                    {/* Previews of attached media */}
+                    {attachedMedia.length > 0 && (
+                      <div className="flex flex-wrap gap-3 mt-3 pt-2">
+                        {attachedMedia.map((media, idx) => (
+                          <div
+                            key={idx}
+                            className="relative w-20 h-20 rounded-xl overflow-hidden border border-neutral-200 bg-neutral-900 shadow-xs group/thumb"
+                          >
+                            {media.type === 'video' ? (
+                              <div className="w-full h-full flex flex-col items-center justify-center text-white text-center p-1 relative">
+                                <video
+                                  src={media.url}
+                                  className="absolute inset-0 w-full h-full object-cover opacity-60"
+                                />
+                                <Play className="w-4 h-4 fill-white relative z-10" />
+                                <span className="text-[9px] font-bold mt-0.5 relative z-10">
+                                  Video
+                                </span>
+                              </div>
+                            ) : (
+                              <img
+                                src={media.url}
+                                alt="Uploaded preview"
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => removeAttachedMedia(idx)}
+                              className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center z-20 shadow-xs cursor-pointer"
+                              title="Remove"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Submit Feedback Alert */}
                   {submitMessage && (
                     <div
@@ -519,7 +732,7 @@ export default function ProductReviews({
                     </button>
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || isUploadingMedia}
                       className="px-6 py-2.5 rounded-xl bg-botanical-600 text-white text-xs font-semibold hover:bg-botanical-700 transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
                     >
                       {isSubmitting && (
@@ -545,10 +758,11 @@ export default function ProductReviews({
                 onClick={() => {
                   setFilterRating(null);
                   setFilterVerifiedOnly(false);
+                  setFilterWithMediaOnly(false);
                 }}
                 className={cn(
                   'px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer',
-                  filterRating === null && !filterVerifiedOnly
+                  filterRating === null && !filterVerifiedOnly && !filterWithMediaOnly
                     ? 'bg-white text-graphite shadow-sm border border-neutral-300 font-semibold'
                     : 'text-graphite/60 hover:text-graphite'
                 )}
@@ -598,6 +812,21 @@ export default function ProductReviews({
                 <CheckCircle className="w-3 h-3 text-emerald-600" />
                 <span>Verified Purchases ({verifiedCount})</span>
               </button>
+
+              {reviewsWithMediaCount > 0 && (
+                <button
+                  onClick={() => setFilterWithMediaOnly(!filterWithMediaOnly)}
+                  className={cn(
+                    'px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer flex items-center gap-1',
+                    filterWithMediaOnly
+                      ? 'bg-botanical-100 text-botanical-900 border border-botanical-300 font-semibold'
+                      : 'text-graphite/60 hover:text-graphite'
+                  )}
+                >
+                  <Camera className="w-3 h-3 text-botanical-700" />
+                  <span>With Photos / Videos ({reviewsWithMediaCount})</span>
+                </button>
+              )}
             </div>
 
             {/* Sort Dropdown */}
@@ -622,6 +851,7 @@ export default function ProductReviews({
               const initial = author.charAt(0).toUpperCase() || 'C';
               const helpfulVotes = (helpfulMap[review.id] || 0) + (review.rating === 5 ? 3 : 1);
               const hasVoted = votedMap[review.id];
+              const reviewMedia = parseReviewMedia(review.images);
 
               const reviewDate = new Date(review.createdAt).toLocaleDateString(
                 'en-IN',
@@ -697,6 +927,53 @@ export default function ProductReviews({
                     {review.comment}
                   </p>
 
+                  {/* Customer Review Photos & Videos Thumbnail Row */}
+                  {reviewMedia.length > 0 && (
+                    <div className="flex flex-wrap gap-2.5 pt-2">
+                      {reviewMedia.map((m, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setActiveMediaList(reviewMedia);
+                            setActiveMediaIndex(idx);
+                            setActiveReviewMeta({
+                              authorName: author,
+                              rating: review.rating,
+                              headline: review.headline,
+                              comment: review.comment,
+                              verifiedPurchase: review.verifiedPurchase,
+                              date: reviewDate,
+                            });
+                            setModalOpen(true);
+                          }}
+                          className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-neutral-200 hover:border-botanical-500 hover:shadow-md transition-all group/item cursor-pointer flex-shrink-0 bg-neutral-900"
+                        >
+                          {m.type === 'video' ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-neutral-900 text-white p-2 text-center relative">
+                              <video
+                                src={m.url}
+                                className="absolute inset-0 w-full h-full object-cover opacity-60"
+                              />
+                              <div className="w-7 h-7 rounded-full bg-black/70 flex items-center justify-center text-white relative z-10 group-hover/item:scale-110 transition-transform">
+                                <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
+                              </div>
+                              <span className="text-[9px] font-bold bg-black/80 px-1.5 py-0.5 rounded text-white mt-1 relative z-10">
+                                Video
+                              </span>
+                            </div>
+                          ) : (
+                            <img
+                              src={m.url}
+                              alt="Review photo"
+                              className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
+                            />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Flipkart / Amazon style Helpful footer */}
                   <div className="flex items-center justify-between pt-3 border-t border-neutral-100 text-xs">
                     <div className="flex items-center gap-3">
@@ -749,6 +1026,7 @@ export default function ProductReviews({
                     onClick={() => {
                       setFilterRating(null);
                       setFilterVerifiedOnly(false);
+                      setFilterWithMediaOnly(false);
                       setShowForm(true);
                     }}
                     className="px-5 py-2.5 rounded-xl bg-graphite text-white text-xs font-semibold hover:bg-black transition-colors"
