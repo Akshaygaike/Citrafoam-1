@@ -247,32 +247,50 @@ export default function ProductReviews({
               Overall Customer Rating
             </h3>
 
-            <div className="flex items-baseline gap-3 mb-3">
-              <span className="text-4xl font-extrabold text-graphite">
-                {avgRating > 0 ? avgRating.toFixed(1) : '5.0'}
-              </span>
-              <span className="text-sm font-medium text-graphite/50">out of 5</span>
-            </div>
+            {totalReviews > 0 ? (
+              <>
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-4xl font-extrabold text-graphite">
+                    {avgRating.toFixed(1)}
+                  </span>
+                  <span className="text-sm font-medium text-graphite/50">out of 5</span>
+                </div>
 
-            {/* Stars Row */}
-            <div className="flex items-center gap-1 text-amber-400 mb-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={cn(
-                    'w-5 h-5',
-                    star <= Math.round(avgRating || 5)
-                      ? 'fill-amber-400 text-amber-500'
-                      : 'fill-transparent text-neutral-300'
-                  )}
-                />
-              ))}
-            </div>
+                {/* Stars Row */}
+                <div className="flex items-center gap-1 text-amber-400 mb-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={cn(
+                        'w-5 h-5',
+                        star <= Math.round(avgRating)
+                          ? 'fill-amber-400 text-amber-500'
+                          : 'fill-transparent text-neutral-300'
+                      )}
+                    />
+                  ))}
+                </div>
 
-            <p className="text-xs text-graphite/60 mb-6">
-              Based on {totalReviews} global rating{totalReviews === 1 ? '' : 's'} (
-              {verifiedCount} verified purchase{verifiedCount === 1 ? '' : 's'})
-            </p>
+                <p className="text-xs text-graphite/60 mb-6">
+                  Based on {totalReviews} verified rating{totalReviews === 1 ? '' : 's'} (
+                  {verifiedCount} verified purchase{verifiedCount === 1 ? '' : 's'})
+                </p>
+              </>
+            ) : (
+              <div className="mb-6">
+                <div className="flex items-center gap-1 text-neutral-300 mb-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className="w-5 h-5 fill-transparent text-neutral-300"
+                    />
+                  ))}
+                </div>
+                <p className="text-xs text-graphite/60">
+                  No customer ratings yet for this formula.
+                </p>
+              </div>
+            )}
 
             {/* Star Distribution Bars (Amazon/Flipkart style) */}
             <div className="space-y-2.5 pt-4 border-t border-neutral-100">

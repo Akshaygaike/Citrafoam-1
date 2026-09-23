@@ -75,33 +75,50 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
         {/* Amazon/Flipkart Rating Summary Link */}
         <div className="mt-3">
-          <a
-            href="#customer-reviews"
-            className="inline-flex items-center gap-2.5 text-xs text-graphite/70 hover:text-botanical-700 transition-colors group cursor-pointer"
-          >
-            <div className="flex items-center gap-1 bg-amber-50 border border-amber-200/90 px-2 py-0.5 rounded-md text-amber-900 font-bold text-xs">
-              <span>{avgRating.toFixed(1)}</span>
-              <Star className="w-3 h-3 fill-amber-400 text-amber-500" />
-            </div>
+          {reviews.length > 0 ? (
+            <a
+              href="#customer-reviews"
+              className="inline-flex items-center gap-2.5 text-xs text-graphite/70 hover:text-botanical-700 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-1 bg-amber-50 border border-amber-200/90 px-2 py-0.5 rounded-md text-amber-900 font-bold text-xs">
+                <span>{avgRating.toFixed(1)}</span>
+                <Star className="w-3 h-3 fill-amber-400 text-amber-500" />
+              </div>
 
-            <div className="flex text-amber-400">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={cn(
-                    'w-3.5 h-3.5',
-                    star <= Math.round(avgRating)
-                      ? 'fill-amber-400 text-amber-500'
-                      : 'fill-transparent text-neutral-300'
-                  )}
-                />
-              ))}
-            </div>
+              <div className="flex text-amber-400">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={cn(
+                      'w-3.5 h-3.5',
+                      star <= Math.round(avgRating)
+                        ? 'fill-amber-400 text-amber-500'
+                        : 'fill-transparent text-neutral-300'
+                    )}
+                  />
+                ))}
+              </div>
 
-            <span className="text-graphite/60 group-hover:underline font-medium">
-              {reviews.length} customer {reviews.length === 1 ? 'review' : 'reviews'}
-            </span>
-          </a>
+              <span className="text-graphite/60 group-hover:underline font-medium">
+                {reviews.length} customer {reviews.length === 1 ? 'review' : 'reviews'}
+              </span>
+            </a>
+          ) : (
+            <a
+              href="#customer-reviews"
+              className="inline-flex items-center gap-2 text-xs text-botanical-700 hover:underline group cursor-pointer font-medium"
+            >
+              <div className="flex text-neutral-300">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className="w-3.5 h-3.5 fill-transparent text-neutral-300"
+                  />
+                ))}
+              </div>
+              <span>No reviews yet • Be the first to review</span>
+            </a>
+          )}
         </div>
       </div>
 

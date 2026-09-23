@@ -6,8 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding Citrafoam database...\n");
 
-  // Clean existing data
-  await prisma.review.deleteMany();
+  // Clean existing product & test data (preserving genuine customer reviews)
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.productVariant.deleteMany();
@@ -129,41 +128,10 @@ async function main() {
   // ─── Reviews ───
   const products = [limescale, copperPolish, degreaser];
 
-  const reviewsData = [
-    // Limescale Eliminator reviews
-    { productId: limescale.id, rating: 5, headline: "Absolutely magical on shower glass!", comment: "I've tried everything from vinegar to expensive brands. Citrafoam cut through 2 years of hard water buildup in one application. The foam really does cling — it doesn't drip like other sprays. My shower door looks brand new. Will never use anything else.", authorName: "Ananya R.", verifiedPurchase: true },
-    { productId: limescale.id, rating: 5, headline: "The science actually works", comment: "As a chemistry teacher, I appreciate the ingredient transparency. Food-grade citric acid is genuinely effective at dissolving calcium carbonate (limescale). This product delivers on its claims without the marketing nonsense. Clean, efficient, and smells fantastic.", authorName: "Dr. Vikram P.", verifiedPurchase: true },
-    { productId: limescale.id, rating: 4, headline: "Great but needs patience on heavy buildup", comment: "Works perfectly on regular limescale. For the really thick stuff around my bathroom taps, I needed to apply twice and wait the full 10 minutes each time. End result was perfect though. The citrus scent is lovely and subtle, not overpowering.", authorName: "Meera K.", verifiedPurchase: true },
-    { productId: limescale.id, rating: 5, headline: "Saved my rental deposit!", comment: "Landlord was going to charge me for the state of the bathroom. Two bottles of this and everything looked pristine. Chrome taps, glass shower screen, ceramic tiles — all sparkling. Easily saved me ₹15,000 in deposit deductions.", authorName: "Rohan S.", verifiedPurchase: true },
-    { productId: limescale.id, rating: 5, headline: "Finally, a cleaner I trust around my kids", comment: "No chlorine, no harsh fumes. I can clean the bathroom while my toddler plays in the next room without worrying. The foam formula means no splashing either. Performance-wise, it outperforms the toxic alternatives. 10/10.", authorName: "Deepa M.", verifiedPurchase: true },
-
-    // Copper & Brass Polish reviews
-    { productId: copperPolish.id, rating: 5, headline: "My grandmother's copper vessels look new!", comment: "Used this on a set of copper pots that have been in the family for 30+ years. The green patina came off effortlessly, and the copper underneath was like a mirror. My grandmother couldn't believe it. The protective film seems to work — they haven't tarnished nearly as fast as usual.", authorName: "Kavitha N.", verifiedPurchase: true },
-    { productId: copperPolish.id, rating: 5, headline: "Temple brass has never looked better", comment: "We use this for our pooja room brass items. The level of shine is remarkable — better than any traditional cleaning method I've used. Being food-grade safe means I don't worry about residue on items we use daily. Highly recommend.", authorName: "Sundar R.", verifiedPurchase: true },
-    { productId: copperPolish.id, rating: 4, headline: "Excellent polish, slightly pricey", comment: "The quality is undeniable — best copper polish I've ever used. The only reason I'm not giving 5 stars is the price. But honestly, a little goes a long way, so the bottle lasts much longer than I expected. The orange scent is a nice touch.", authorName: "Arjun D.", verifiedPurchase: true },
-    { productId: copperPolish.id, rating: 5, headline: "Professional-grade results at home", comment: "I restore antique hardware as a hobby. This product gives results comparable to professional metal restoration compounds, but it's completely non-toxic. Used it on 19th century door handles and the results were museum-worthy.", authorName: "Farid A.", verifiedPurchase: true },
-
-    // Kitchen Cleaner reviews
-    { productId: degreaser.id, rating: 5, headline: "Range hood transformation!", comment: "The filter on my kitchen chimney was coated in a year's worth of cooking oil. Sprayed this on, waited 5 minutes, and the grease literally slid off. I couldn't believe what I was seeing. The lemongrass-ginger scent makes the kitchen smell amazing after cleaning.", authorName: "Priya L.", verifiedPurchase: true },
-    { productId: degreaser.id, rating: 5, headline: "Safe on my marble countertops", comment: "I was terrified of using degreasers on marble — most are too acidic and etch the surface. Did a spot test first and Citrafoam was perfectly safe. Cuts through olive oil splatter without any damage to the stone. Relief and clean counters!", authorName: "Nisha G.", verifiedPurchase: true },
-    { productId: degreaser.id, rating: 4, headline: "Everyday hero in our kitchen", comment: "We cook Indian food daily — lots of oil, lots of spices. This has become our daily wipe-down spray. Handles turmeric stains, oil splatter, and that mysterious sticky film on cabinet doors. The enzyme technology really does work differently from regular cleaners.", authorName: "Amit T.", verifiedPurchase: true },
-    { productId: degreaser.id, rating: 5, headline: "Stainless steel appliance miracle", comment: "Our fridge and dishwasher fronts were covered in fingerprints and smudges. One spray and wipe — showroom finish. No streaks, no residue. I've been recommending this to everyone in my apartment building.", authorName: "Zara I.", verifiedPurchase: true },
-  ];
-
-  for (const review of reviewsData) {
-    await prisma.review.create({
-      data: {
-        ...review,
-        userId: testUser.id,
-      },
-    });
-  }
-  console.log(`✅ Created ${reviewsData.length} reviews`);
-
   console.log("\n🎉 Seed complete! Database is ready.");
   console.log(`   📦 ${products.length} products`);
-  console.log(`   ⭐ ${reviewsData.length} reviews`);
   console.log(`   👤 1 test user (${testUser.email})`);
+  console.log("   ⭐ No fake reviews seeded. Only genuine customer reviews are stored.");
 }
 
 main()
